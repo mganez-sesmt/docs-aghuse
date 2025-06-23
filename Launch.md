@@ -51,11 +51,17 @@ Arquivos de confiugração do
 
 ## Launcher de Entidades 1.
 `{basedir}/aghu-entidades/`
+
 ` mvn install -X --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" `
 
 ## Launcher de AGHU 2.
 `{basedir}/aghu/`
-`mvn install  --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"`
+
+`mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"`
+
+
+## Levantar o Servidor Wildfly 3.
+Basta executar o start-wildfly, tendo o JBOSS_HOME configurado corretamente.
 
 ### asdasdasd
 ## asdasdasd

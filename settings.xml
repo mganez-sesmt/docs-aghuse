@@ -1,0 +1,46 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <!-- Se o Nexus exigir autenticação -->
+        <server>
+            <id>nexus-hcpa</id>
+            <username>seu-usuario</username>
+            <password>sua-senha</password>
+        </server>
+    </servers>
+
+    <mirrors>
+        <!-- Configurar o Nexus como espelho (opcional, mas recomendado para evitar falhas) -->
+        <mirror>
+            <id>nexus-mirror</id>
+            <name>Nexus HCPA Mirror</name>
+            <url>http://nexus.hcpa.edu.br/repository/maven-public/</url>
+            <mirrorOf>*</mirrorOf> <!-- Espelha todos os repositórios -->
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>nexus-profile</id>
+            <repositories>
+                <repository>
+                    <id>nexus-hcpa</id>
+                    <name>Nexus HCPA</name>
+                    <url>http://nexus.hcpa.edu.br/repository/maven-public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>nexus-profile</activeProfile>
+    </activeProfiles>
+</settings>

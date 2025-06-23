@@ -59,15 +59,9 @@ Arquivos de confiugração do
 
 `mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"`
 
+## Configurar Servidor 3.
 
-## Levantar o Servidor Wildfly 3.
+## Levantar o Servidor Wildfly 4.
 Basta executar o start-wildfly, tendo o JBOSS_HOME configurado corretamente.
 
-### asdasdasd
-## asdasdasd
-
-```
-adasdasd
-adasdas
-asdasd
-```
+## Deploy 5.

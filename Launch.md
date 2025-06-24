@@ -21,3 +21,6 @@ Arquivos de confiugração para se colocar na pasta .m2
 Basta executar o start-wildfly, tendo o JBOSS_HOME configurado corretamente.
 
 ## Deploy 5.
+`{basedir}/aghu/aghu-ear/`
+
+`mvn wildfly:deploy "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"`

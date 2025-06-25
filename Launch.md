@@ -1,5 +1,6 @@
 # Básico
 Configure as variáveis de ambiente. Diretório do java, `%JAVA_HOME%`, diretório do maven, `%MAVEN_HOME%`, e diretório do wildfly `%JBOSS_HOME%`.
+Já no Path, coloque as referências para a pasta bin de cada uma.
 
 
 # CLI

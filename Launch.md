@@ -25,6 +25,27 @@ Basta executar o start-wildfly, tendo o JBOSS_HOME configurado corretamente.
 
 `mvn wildfly:deploy "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"`
 
+Para realizar o deploy de forma remota é necessário colocar o conteúdo na forma a seguir, no arquivo `{basedir}/aghu/aghu-ear/pom.xml`
+
+``` xml
+
+    <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>4.2.2.Final</version>
+        <configuration>
+          <hostname>10.15.232.9</hostname>
+          <port>9990</port>
+          <username>usuario2</username>
+          <password>Usu@r105</password> <!-- <secret value="VXN1QHIxMDU=" /> -->
+          <filename>${contexto}.ear</filename>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+
+```
+
+
 # Wildfly 
 ## Habilitando o modo de serviço
 Copie a pasta service

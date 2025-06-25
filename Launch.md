@@ -1,3 +1,7 @@
+# Básico
+Configure as variáveis de ambiente. Diretório do java, `%JAVA_HOME%`, diretório do maven, `%MAVEN_HOME%`, e diretório do wildfly `%JBOSS_HOME%`.
+
+
 # CLI
 ## Maven
 Lembrando que para executar os comandos do Maven é necessário que esteja em uma pasta que tenha o pom.xml

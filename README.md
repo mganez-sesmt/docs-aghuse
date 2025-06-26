@@ -39,14 +39,14 @@ Para realizar o deploy de forma remota é necessário colocar o conteúdo na for
         <artifactId>wildfly-maven-plugin</artifactId>
         <version>4.2.2.Final</version>
         <configuration>
-          <hostname>10.15.232.9</hostname>
-          <port>9990</port>
-          <username>usuario2</username>
-          <password>Usu@r105</password> <!-- <secret value="VXN1QHIxMDU=" /> -->
-          <filename>${contexto}.ear</filename>
-          <skip>false</skip>
+            <hostname>10.15.232.9</hostname>
+            <port>9990</port>
+            <username>usuario2</username>
+            <password>Usu@r105</password> <!-- <secret value="VXN1QHIxMDU=" /> -->
+            <filename>${contexto}.ear</filename>
+            <skip>false</skip>
         </configuration>
-      </plugin>
+    </plugin>
 
 ```
 

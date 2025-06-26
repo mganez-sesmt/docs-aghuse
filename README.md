@@ -28,7 +28,7 @@ Basta executar o start-wildfly, tendo o JBOSS_HOME configurado corretamente.
 ## Deploy 5.
 `{basedir}/aghu/aghu-ear/`
 
-`mvn wildfly:deploy "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"`
+`mvn wildfly:deploy -U "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"`
 
 Para realizar o deploy de forma remota é necessário colocar o conteúdo na forma a seguir, no arquivo `{basedir}/aghu/aghu-ear/pom.xml`
 

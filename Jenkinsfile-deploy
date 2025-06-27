@@ -1,0 +1,128 @@
+pipeline {
+    agent any
+
+    environment {
+        BASEDIR = "${env.WORKSPACE}"
+        JBOSS_HOME = "/opt/wildfly" // ajuste conforme necessário
+    }
+
+    tools {
+        maven 'maven'
+    }
+
+    stages {
+        stage('Clonando o repositório') {
+            steps {
+                script {
+                    echo "Iniciando clone do repositório..."
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']],
+                        extensions: [
+                            [$class: 'CloneOption',
+                             depth: 0,
+                             noTags: false,
+                             reference: '',
+                             shallow: false,
+                             timeout: 100000],
+                            [$class: 'CheckoutOption', timeout: 100000]
+                        ],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/roniere-carvalho-sesmt/aghu.git',
+                            credentialsId: '1b5bbff4-b140-4acf-91ec-57e08f8d0623'
+                        ]]
+                    ])
+                    
+                    echo "Clone concluído! Verificando..."
+                    sh 'git status'
+                    sh 'git log --oneline -3'
+                }
+            }
+        }
+
+        stage('Build com Maven Entidades') {
+            steps {
+                dir("${env.BASEDIR}/aghu-entidades/") {
+                    sh '''
+                        mvn install -X -U --activate-profiles=PMD \
+                          -Dmaven.wagon.http.ssl.allowall=true \
+                          -Dmaven.wagon.http.ssl.insecure=true \
+                          -Dpmd.skip=true
+                    '''
+                }
+            }
+        }
+
+        stage('Build com Maven Aghu') {
+            steps {
+                dir("${env.BASEDIR}/aghu/") {
+                    sh '''
+                        mvn install -U --activate-profiles=PMD \
+                          -Dmaven.wagon.http.ssl.allowall=true \
+                          -Dmaven.wagon.http.ssl.insecure=true \
+                          -Dpmd.skip=true \
+                          -Dmaven.test.skip=true
+                    '''
+                }
+            }
+        }
+
+        stage('Criação arquivo de configurações') {
+            steps {
+                dir("${env.WORKSPACE}/") {
+                    withCredentials([file(credentialsId: '273735d1-fa7e-4c5d-ba06-543ed4709f6f', variable: 'SECRET_FILE_PATH')]) {
+                        sh '''
+                            cp "$SECRET_FILE_PATH" "app_sesmt.properties"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage("Configurar Servidor Wildfly") {
+            steps {
+                sh "${env.JBOSS_HOME}/bin/service/service.sh stop"
+
+                dir("${env.BASEDIR}/aghu/aghu-ear") {
+                    sh '''
+                        mvn initialize -X -P configuracao \
+                          -Dmaven.test.skip=true \
+                          -Dtema.aghu=laranja \
+                          -Dsistema.cups=false \
+                          -Dcertificado.nfe=12345678 \
+                          -Dlogout.unload=false \
+                          -Dlogin-module.class=br.gov.mec.aghu.casca.autenticacao.AghuseApenasNegocialSecurityRealm \
+                          -Dogin-module-pesquisa.class=br.gov.mec.aghu.casca.autenticacao.AghusePesquisaApenasNegocialSecurityRealm \
+                          -Djboss.home=$JBOSS_HOME \
+                          -Denvfilter=${env.WORKSPACE}/app_sesmt.properties \
+                          -Dmaven.wagon.http.ssl.insecure=true \
+                          -Dmaven.wagon.http.ssl.allowall=true \
+                          -DlogQueries=true \
+                          -Ddbfilter=pg
+                    '''
+                }
+            }
+        }
+
+        stage("Deploy Wildfly") {
+            steps {
+                sh '''
+                    echo Reiniciando Wildfly via CLI...
+                    $JBOSS_HOME/bin/service/service.sh restart
+                '''
+                dir("${env.BASEDIR}/aghu/aghu-ear") {
+                    sh '''
+                        mvn wildfly:deploy \
+                          -Dwildfly.hostname=localhost \
+                          -Dwildfly.port=9990 \
+                          -Dwildfly.username=usuario3 \
+                          -Dwildfly.password=Usu@r105 \
+                          -Dwildfly.protocol=http-remoting \
+                          -Dmaven.wagon.http.ssl.allowall=true \
+                          -Dmaven.wagon.http.ssl.insecure=true
+                    '''
+                }
+            }
+        }
+    }
+}

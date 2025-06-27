@@ -125,7 +125,7 @@ if "x%JBOSS_JAVA_SIZING%" == "x" (
 )
 set "JAVA_OPTS=%JBOSS_JAVA_SIZING%"
 ```
-
+Caso isso não funcione você pode setar uma variável de ambiente para sobrepor. Lembrando que a variável de ambiente, em nível de sistema, JAVA_OPTS.
 
 ## Login de gerenciador.
 Execute o arquivo `add-user.bat` encontrado no `%JBOSS_HOME%\bin` 

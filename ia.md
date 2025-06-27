@@ -40,11 +40,12 @@ Undeploy:
 mvn wildfly:undeploy
 ```
 Redeploy (undeploy + deploy):
-````
+```
 mvn wildfly:redeploy
 ```
+
 Deploy apenas se o artefato foi modificado:
 
-```
+``` 
 mvn wildfly:deploy-only
 ```

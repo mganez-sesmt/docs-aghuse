@@ -13,7 +13,7 @@ Arquivos de confiugração para se colocar na pasta .m2
 ## Launcher de Entidades 1.
 `{basedir}/aghu-entidades/`
 
-` mvn install -X --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" `
+`mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" `
 
 ## Launcher de AGHU 2.
 `{basedir}/aghu/`
@@ -147,3 +147,13 @@ Caso você esteja utilizando uma versão que já teve um deploy ativado, o wildf
 ```
 
 Exclua para que possa fazer seu primeiro deploy.
+
+
+## Login nas VMs
+sesmt:sesmt
+
+### Banco
+`ssh sesmt@10.15.232.10 -p 22890`
+
+### Aplicação
+`ssh sesmt@10.15.232.13 -p 22890`

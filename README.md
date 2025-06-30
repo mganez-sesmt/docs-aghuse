@@ -160,3 +160,42 @@ sesmt:sesmt
 
 ### Dica
 Para sair da conexão CRTL+D.
+
+### Configuração no Linux
+1. Vá para o root.
+``` sh
+sudo su
+```
+
+2. Vá para a home do bash
+``` sh
+cd $HOME
+```
+
+
+3. Abra o arquivo de configuração do bash, para adicionar as variáveis de ambiente mandatórias.
+``` sh
+nano .bashrc
+```
+
+
+4. Adicione as variáveis de ambiente (Exemplo, pois o diretório pode mudar)
+``` sh
+export JBOSS_HOME="home/sesmt/Documentos/develop/wildfly"
+export JAVA_HOME="usr/lib/jvm/java-17-openjdk-amd64"
+export ENV_FILTER="home/sesmt/arquivos/app_sesmt.properties"
+export JAVA_OPTS="-Xms5G -Xmx5G -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999m"
+```
+
+5. Configure o standalone.conf para executar as configurações do standalone.sh
+Edite na linha JBOSS_JAVA_SIZING
+``` conf
+JBOSS_JAVA_SIZING="-Xms5G -Xmx5G -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999m"
+```
+
+6. Inicialização 
+Localizado em `$JAVA_BOSS/bin`
+
+``` sh
+./standalone.sh -c standalone-full.xml
+```

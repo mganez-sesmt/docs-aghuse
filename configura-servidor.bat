@@ -48,7 +48,7 @@ mvn "initialize" ^
 "login-module.class=br.gov.mec.aghu.casca.autenticacao.AghuseApenasNegocialSecurityRealm" ^
 "login-module-pesquisa.class=br.gov.mec.aghu.casca.autenticacao.AghusePesquisaApenasNegocialSecurityRealm" ^
 "jboss.home=%JBOSS_HOME%" ^
-"envfilter=C:\Users\mateusanez\Documents\Develop\aghuse\arquivos\app_sesmt.properties" ^
+"envfilter=%ENV_FILTER%" ^
 "maven.wagon.http.ssl.insecure=true" ^
 "maven.wagon.http.ssl.allowall=true" ^
 "logQueries=true" ^

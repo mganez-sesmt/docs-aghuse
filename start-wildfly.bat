@@ -18,7 +18,6 @@ standalone.bat ^
   -Djboss.home.dir="%JBOSS_HOME%" ^
   -Djboss.server.base.dir=%JBOSS_HOME%\standalone ^
   -Dprogram.name="JBossTools: WildFly 24+" ^
-  
   -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999M ^
   -Dorg.jboss.resolver.warning=true ^
   -Djava.net.preferIPv4Stack=true ^

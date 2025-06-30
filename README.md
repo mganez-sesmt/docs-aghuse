@@ -157,3 +157,6 @@ sesmt:sesmt
 
 ### Aplicação
 `ssh sesmt@10.15.232.13 -p 22890`
+
+### Dica
+Para sair da conexão CRTL+D.

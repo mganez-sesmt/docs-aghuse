@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "JBOSS_HOME: $JBOSS_HOME"
+
 # Verify JBOSS_HOME is set
 if [ -z "$JBOSS_HOME" ]; then
     echo "Error: JBOSS_HOME environment variable is not set"

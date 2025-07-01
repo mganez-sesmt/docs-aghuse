@@ -162,6 +162,14 @@ sesmt:sesmt
 Para sair da conexão CRTL+D.
 
 ### Configuração no Linux
+Nota NÂO Adicione as variáveis de ambiente, existe uma série de problemas relacionados a permissão e mesmo que ele tenha a autorização para a leitura e coisas no mesmmo sentido, ele irá reclamar que não enxerga ou coisas parecidas. Para isso faça as configurações diretamente no arquivo standalone.cong
+``` sh
+export JBOSS_HOME="home/sesmt/Documentos/develop/wildfly"
+export JAVA_HOME="usr/lib/jvm/java-17-openjdk-amd64"
+export ENV_FILTER="home/sesmt/arquivos/app_sesmt.properties"
+export JAVA_OPTS="-Xms5G -Xmx5G -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999m"
+```
+
 1. Vá para o root.
 ``` sh
 sudo su
@@ -178,20 +186,15 @@ cd $HOME
 nano .bashrc
 ```
 
-
-4. Adicione as variáveis de ambiente (Exemplo, pois o diretório pode mudar)
-``` sh
-export JBOSS_HOME="home/sesmt/Documentos/develop/wildfly"
-export JAVA_HOME="usr/lib/jvm/java-17-openjdk-amd64"
-export ENV_FILTER="home/sesmt/arquivos/app_sesmt.properties"
-export JAVA_OPTS="-Xms5G -Xmx5G -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999m"
-```
-
-5. Configure o standalone.conf para executar as configurações do standalone.sh
-Edite na linha JBOSS_JAVA_SIZING
-``` conf
-JBOSS_JAVA_SIZING="-Xms5G -Xmx5G -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999m"
-```
+4. Configure o standalone.conf para executar as configurações do standalone.sh
+    1. Edite na linha JBOSS_JAVA_SIZING
+    ``` conf
+    JBOSS_JAVA_SIZING="-Xms5G -Xmx5G -XX:MetaspaceSize=99M -XX:MaxMetaspaceSize=999m"
+    ```
+    2. Adicione o local da JAVA_HOME
+    ``` conf
+    JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+    ```
 
 6. Inicialização 
 Localizado em `$JAVA_BOSS/bin`
@@ -199,3 +202,5 @@ Localizado em `$JAVA_BOSS/bin`
 ``` sh
 ./standalone.sh -c standalone-full.xml
 ```
+
+Caso tenha algum problema associado ao standalone-full.xml, observe as informações dele presente no arquivo na pasta `$JBOSS_HOME/standalone/configuration`

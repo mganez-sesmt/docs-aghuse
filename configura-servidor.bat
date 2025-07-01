@@ -34,6 +34,22 @@ if not exist "%JBOSS_HOME%" (
     exit /b 1
 )
 
+REM EXISTE ENV_FILTER CONFIGURADA
+REM Verifica se a variável de ambiente ENV_FILTER está definida
+if "%ENV_FILTER%"=="" (
+    echo [ERRO] Variável de ambiente ENV_FILTER não está definida
+    echo Defina a variável ENV_FILTER apontando para o arquivo de filtro
+    pause
+    exit /b 1
+)
+
+REM Verifica se o arquivo existe
+if not exist "%ENV_FILTER%" (
+    echo [ERRO] Arquivo de filtro não encontrado: %ENV_FILTER%
+    pause
+    exit /b 1
+)
+
 
 REM Execução Maven
 echo Executando Maven em: %cd%

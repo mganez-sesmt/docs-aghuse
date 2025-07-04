@@ -34,3 +34,6 @@ Posteriomente?
 ``` java
 ???
 ```
+nota
+BaseEntityMultiEmpresaSeq : AGH_UNIDADES_FUNCIONAIS
+AEL_UNF_EXECUTA_EXAMES : possui empId (oculto pela classe : BaseEntityMultiEmpresaId)

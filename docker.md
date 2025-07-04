@@ -8,7 +8,7 @@ https://docs.docker.com/engine/install/linux-postinstall/
 sudo usermod -aG docker $USER
 ```
 
-	Criar um container baseado em uma imagem
+Criar um container baseado em uma imagem
 ``` shell 
 docker run <image>
 ```
@@ -42,29 +42,29 @@ Interromper de maneira inatural (10s para desligamento seguro)
 docker stop -t=0 <id-container | names>
 ```
 
-	Argumento -d (detached) o terminal não fica preso.
+Argumento -d (detached) o terminal não fica preso.
 ``` shell 
 docker run -d <image>
 ```
 
-	Imagem que foi utilizada para a criação de site estático : dockersamples/static-site
+Imagem que foi utilizada para a criação de site estático : dockersamples/static-site
 
-	Para e remover
+Para e remover
 ``` shell 
 docker rm <id-container | name> --force
 ```
 
-	Para criar mapeamento automático de portas 
+Para criar mapeamento automático de portas 
 ``` shell 
 docker run -d -P <image>
 ```
 
-	Mostrar o mapeamento de portas de um host
+Mostrar o mapeamento de portas de um host
 ``` shell 
 docker port <id-container | name>
 ```
 
-	Definir manualmente a porta do nosso hospedeiro para acessar a porta do hóspede
+Definir manualmente a porta do nosso hospedeiro para acessar a porta do hóspede
 ``` shell 
 docker run -d -p <porta-hospedeira>:<porta-hóspede> <image>
 ```
@@ -74,17 +74,17 @@ Exemplo:
 docker run -d -p 8080:80 dockersamples/static-site
 ```
 
-	Para mostrar as imagens baixadas
+Para mostrar as imagens baixadas
 ``` shell 
 docker images
 ```
 
-	Para analisar uma imagem objetiva
+Para analisar uma imagem objetiva
 ``` shell 
 docker inspect <id-image>
 ```
 
-	Para ver o histórico
+Para ver o histórico
 ``` shell 
 docker history <id-image>
 ```
@@ -98,7 +98,7 @@ docker images
 docker run -d -p 8081:3000 mateusanezsesmt/app-node:1.0
 ```
 
-	Finalizando todos os containers
+Finalizando todos os containers
 ``` shell 
 docker stop $(docker container ls -q)
 ```
@@ -116,7 +116,7 @@ RUN npm install
 ENTRYPOINT npm start
 ```
 
-	Publicar
+Publicar
 ``` shell 
 docker push mateusanezsesmt/app-node:1.0
 ```
@@ -127,7 +127,7 @@ docker run -it -v /home/usuario/volume-docker:/app ubuntu bash
 docker run -it --mount type=bind,source=/home/daniel/volume-docker,target=/app ubuntu bash
 ```
 
-	Criação de volume e visualização
+Criação de volume e visualização
 ``` shell 
 docker volume ls
 docker volume create meu-volume
@@ -137,19 +137,19 @@ docker volume create meu-volume
 docker run -it -v meu-volume:/app ubuntu bash
 ```
 
-	Esse volume fica gravado no seguinte diretório /var/lib/docker/volumes/
+Esse volume fica gravado no seguinte diretório /var/lib/docker/volumes/
 
-	Listar redes
+Listar redes
 ``` shell 
 docker network ls
 ```
 
-	Criar container com nome
+Criar container com nome
 ``` shell 
 docker run -it – ubuntu1 ubuntu bash
 ```
 
-	Criar rede com nome
+Criar rede com nome
 ``` shell 
 docker network create --driver bridge minha-bridge
 ```
@@ -159,7 +159,7 @@ Criar container com nome e rede definida
 docker run -it – ubuntu1 --network minha-bridge ubuntu bash
 ```
 
-		Assim é possível criar dois contêineres que se comuniquem. Eles utilizam o modo de rede bridge. Mas no modo de rede none eles não teriam uma interface de rede. No modo host, a interface do hospedeira é compartilhada com a hóspede.
+Assim é possível criar dois contêineres que se comuniquem. Eles utilizam o modo de rede bridge. Mas no modo de rede none eles não teriam uma interface de rede. No modo host, a interface do hospedeira é compartilhada com a hóspede.
 
 Exemplo
 ``` shell 
@@ -169,7 +169,7 @@ docker run -d --network minha-bridge --name meu-mongo mongo:4.4.6
 docker run -d --network minha-bridge --name alurabooks -p 3000:3000 aluradocker/alura-books:1.0
 ```
 
-	Como eles trabalham com nome é necessário apagar/remover o container, visto que os container podem ser restaurados
+Como eles trabalham com nome é necessário apagar/remover o container, visto que os container podem ser restaurados
 ``` shell 
 docker stop $(docker container ls -aq)
 docker rm $(docker container ls -aq)
@@ -184,6 +184,7 @@ swarm e deploy - devops
 
 ===
 copiar do Windows para o WSL
+
 arquivo
 ``` sh
 cp /mnt/c/Users/YourName/Documents/my_document.txt ~/

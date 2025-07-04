@@ -1,6 +1,6 @@
 ## 1
 Módulo: `aghu-dao`
-Classe:`br.gov.mec.aghu.compras.dao.AutorizacaoFornecedorPedidosQueryBuilder`
+Classe: `br.gov.mec.aghu.compras.dao.AutorizacaoFornecedorPedidosQueryBuilder`
 
 ### Método: `addProjectionList()` Linhas (65-83).
 Justificativa: para poder utilizar os comandos de Order que são frutos logo a baixo é necessário que os campos setados pela projection estejam agrupados.
@@ -91,8 +91,8 @@ protected void doBuild(DetachedCriteria criteria) {
 
 ## 2
 Módulo: `aghu-dao`
-Classe:`br.gov.mec.aghu.compras.dao.FornecedoresComEntregasPendentesProgEntrQueryBuilder`
-###Método`listarParcelasItemPendente()` Linhas (33-82,33-85)
+Classe: `br.gov.mec.aghu.compras.dao.FornecedoresComEntregasPendentesProgEntrQueryBuilder`
+### Método`listarParcelasItemPendente()` Linhas (33-82,33-85)
 Justificativa:  A função proposta não funciona no PostgreSQL do Servidor.
 **DE**
 
@@ -113,7 +113,7 @@ String projectionAtrasoDias =  isOracle() ? "(TRUNC(SYSDATE) - TRUNC(this_.DT_PR
 
 ## 3
 Módulo: aghu-dao
-Classe:`br.gov.mec.aghu.compras.dao.FornecedoresComEntregasPendentesQueryBuilder`
+Classe: `br.gov.mec.aghu.compras.dao.FornecedoresComEntregasPendentesQueryBuilder`
 ### Método `montarCriteriaListarFornecedoresComEntregasPendentesComMesmoCGC()` Linhas (61-118,61-129)
 Justificativa: O método arcaico utilizado era legado e usa regras de negócios não mais vigentes, principalmente pela queda do CGC e uso pleno do CNPJ. Além de usar SQL explicito ao invés de Criteria.
 **DE**
@@ -151,7 +151,7 @@ Integer tamCGC = filtro.getFornecedorVO().getCgc().toString().length();
 ```
 ## 4
 Módulo: `aghu-dao`
-Classe:`br.gov.mec.aghu.compras.dao.ScoAutorizacaoFornDAO`
+Classe: `br.gov.mec.aghu.compras.dao.ScoAutorizacaoFornDAO`
 ### Método `adicionarRestricaoFornecedor()` Linhas (1529-1554,1544-1567)
 Justificativa: Postgresql não aceitou o tipo String, dessa forma necessário utilizar o mais gneérico do SQL TEXT.
 **DE**
@@ -214,9 +214,9 @@ private void adicionarRestricaoFornecedor(DetachedCriteria criteria, FornecedorV
 }
 ```
 ## 5 
-Módulo:`aghu-dao` 
+Módulo: `aghu-dao` 
 
-Classe:`br.gov.mec.aghu.compras.dao.ScoAutorizacaoFornecedorPedidoDAO`
+Classe: `br.gov.mec.aghu.compras.dao.ScoAutorizacaoFornecedorPedidoDAO`
 
 ### Função`getPesquisarAutorizacaoAoAcessarTela` Linha (942-983,942-995)
 Justificativa: O método não funciona em PostgreSql.
@@ -327,9 +327,9 @@ private Query getPesquisarAutorizacaoAoAcessarTela(boolean count) {
 ```
 
 ## 6
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.estoque.dao.SceDocumentoFiscalEntradaDAO`
+Classe: `br.gov.mec.aghu.estoque.dao.SceDocumentoFiscalEntradaDAO`
 
 ### Função `montarCriteriaNroNFSuggestion` Linhas (1350-1366,1350-1385)
 Justificativa: Informação levantada pelo Marciano, Não exatamente a PAC, mas por mexer com notas fiscais é importante a correção.
@@ -396,9 +396,9 @@ private DetachedCriteria montarCriteriaNroNFSuggestion(String parametro){
 	}
 ```
 ## 7
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.estoque.dao.SceE660IncFornDAO`
+Classe: `br.gov.mec.aghu.estoque.dao.SceE660IncFornDAO`
 ### Função obterNcmCFOP Linhas (574-611,574-619)
 Justificativa: correção dos SQL explicíto. Adicionado SQL PostgreSql.
 **DE**
@@ -494,9 +494,9 @@ public String obterNcmCFOP(Integer frnNumero,  Integer dfeNumero, String dfeSeri
 	}
 ```
 ## 8
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.estoque.dao.SceItemNotaPreRecebimentoDAO`
+Classe: `br.gov.mec.aghu.estoque.dao.SceItemNotaPreRecebimentoDAO`
 ### Função `obterAFsComMaterial` Linhas (77-145,81-153)
 Justificativa: A correção é tanto ligada por regra de negócio arcaica, atualização de SQL. Atualmente não se usa mais CGC, talvez seja parte do sistema legado do HCPA, ou de coisas ainda mais antigas. CGC agora é o CNPJ desde 1998.
 **DE**
@@ -648,9 +648,9 @@ public List<AutorizacaoFornecedorMaterialVO> obterAFsComMaterial(Integer codigoM
 	}
 ``` 
 ## 9
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.financeiro.dao.CtbClassifFinanN1DAO`
+Classe: `br.gov.mec.aghu.financeiro.dao.CtbClassifFinanN1DAO`
 ### Função `montarNivelUm` linhas (28-40,28-39)
 Justificativa: Não se pode colocar Order sem projeção, e não se deve utilizar Order com chamadas Count.
 **DE**
@@ -713,9 +713,9 @@ private DetachedCriteria montarProjectionSubNaturezasVO(DetachedCriteria criteri
 ```
 
 ## 10
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.financeiro.dao.CtbClassifFinanN2DAO`
+Classe: `br.gov.mec.aghu.financeiro.dao.CtbClassifFinanN2DAO`
 (Semelhante ao caso anterior)
 ### Função `montarNivelDois` Linhas (31-47,31-46)
 Justificativa: Não se pode colocar Order sem projeção, e não se deve utilizar Order com chamadas Count.
@@ -792,9 +792,9 @@ private DetachedCriteria montarProjectionSubNaturezasVO(DetachedCriteria criteri
 	}
 ```
 ## 11
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.financeiro.dao.CtbClassifFinanN3DAO`
+Classe: `br.gov.mec.aghu.financeiro.dao.CtbClassifFinanN3DAO`
 ### montarProjectionSubNaturezasVO() Linhas (76-86,76-86)
 Justificativa: Simplesmente está errada. Possivelmente erro de digitação, ou CRTL+C e CRTL+V.
 **DE**
@@ -830,9 +830,9 @@ private DetachedCriteria montarProjectionSubNaturezasVO(DetachedCriteria criteri
 	}
 ```
 ## 12
-Módulo:`aghu-orcamento`
+Módulo: `aghu-orcamento`
 
-Classe:`br.gov.mec.aghu.orcamento.cadastrosbasicos.business.NaturezaRN`
+Classe: `br.gov.mec.aghu.orcamento.cadastrosbasicos.business.NaturezaRN`
 ### Método `processaUpdateRelacionaNatureza` Linhas (384-406,391-437)
 Justificativa: A lógica está certa, entretanto está puxando informações erradas na utilização do DAO, assim por não utilizar as chaves certas o retorno ou falha ou retorna nulo. isso pelo funções internas `.getCodigo` e `.getGnpCodigo`
 **DE**
@@ -983,9 +983,9 @@ private void processarUpdateNaturezaPlano(NaturezaVO item, NaturezaVO itemSeleci
 ```
 
 ## 13
-Módulo:`aghu-vo`
+Módulo: `aghu-vo`
 
-Classe:`br.gov.mec.aghu.orcamento.cadastrosbasicos.vo.CtbSubnaturezaPlanoVO`
+Classe: `br.gov.mec.aghu.orcamento.cadastrosbasicos.vo.CtbSubnaturezaPlanoVO`
 ### Função getCheckAutoRelacionar() Linhas (447-449,447-449)
 Justificativa: Várias chamadas pede esse valor, entretanto por não ser um model, fica mais difícil de realizar o controle por depender de como quem chama sem refatorar muitos lugares. O erro é de valor nulo.
 **DE**
@@ -1002,9 +1002,9 @@ public Boolean getCheckAutoRelacionar() {
 ```
 
 ## 14
-Módulo:`aghu-dao`
+Módulo: `aghu-dao`
 
-Classe:`br.gov.mec.aghu.compras.dao.ScoSolicitacoesDeComprasDAO`
+Classe: `br.gov.mec.aghu.compras.dao.ScoSolicitacoesDeComprasDAO`
 ### Função countLoteSolicitacaoCompras Linhas (1597-1599,1608-1364)
 Justificativa: Existe a possibilidade de ser uma característica do PostgreSQL mas não identificou uma explicação. A contagem igual a zero não resulta em zero mas resulta em nula.
 

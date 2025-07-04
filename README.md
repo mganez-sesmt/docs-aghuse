@@ -21,14 +21,23 @@ Arquivos de confiugração para se colocar na pasta .m2
 `mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"`
 
 ## Configurar Servidor 3.
+O configura-servidor.bat faz as configurações do wildfly, basta apontar qual pasta você quer que o configure como exemplo abaixo
+``` shell
+configura-servidor.bat "C:\develop\aghuse\aghu\aghu-ear"
+```
+O pré requisito é apontar no `%ENV_FILTER%` e o `%JBOSS_HOME%`.
 
 ## Levantar o Servidor Wildfly 4.
 Basta executar o start-wildfly, tendo o JBOSS_HOME configurado corretamente.
 
 ## Deploy 5.
-`{basedir}/aghu/aghu-ear/`
+``` shell
+cd .../aghu/aghu-ear/
+```
 
-`mvn wildfly:deploy -U "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"`
+``` shell
+mvn wildfly:deploy -U "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"
+```
 
 Para realizar o deploy de forma remota é necessário colocar o conteúdo na forma a seguir, no arquivo `{basedir}/aghu/aghu-ear/pom.xml`
 
@@ -52,7 +61,8 @@ Para realizar o deploy de forma remota é necessário colocar o conteúdo na for
 
 
 # Wildfly 
-## Habilitando o modo de serviço
+## Modo Serviço no Windows
+### Habilitando o modo de serviço
 Copie a pasta service
 
 `%JBOSS_HOME%\docs\contrib\scripts\service`
@@ -61,7 +71,7 @@ Para a pasta
 
 `%JBOSS_HOME%\bin\`
 
-## Ativando o modo de serviço
+### Ativando o modo de serviço
 Na pasta copiada terá esse arquivo a executar.
 
 `service.bat install /config standalone-full.xml /startup`

@@ -204,18 +204,21 @@ docker build -t meu_app:latest .
 
 liberando WSL2 para o Windows, não deve ser necessário no ambiente produção
 
-	PODE SER NECESSÁRIO RECONFIGURAR QUANDO REINICIAR A MÁQUINA
+PODE SER NECESSÁRIO RECONFIGURAR QUANDO REINICIAR A MÁQUINA
 
 NO LINUX
-
-	ip addr show eth0 | grep inet
+``` sh
+ip addr show eth0 | grep inet
+```
 
 NO WINDOWS (ADMIN)
 
-	netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=<resultado-do-anterior>
+``` powershell
+netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=80 connectaddress=<resultado-do-anterior>
 New-NetFirewallRule -DisplayName "Allow HTTP 80" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 80
+``` 
 
-
+Isso acontece pois no WSL2 uma máquina nova é criada, e independe do windwos. Então esse processo é para pegar o ip da máquina virtual wsl para redirecionar os pacotes recebidos do Windows para o WSL
 
 
 /etc/systemd/system/wildfly.service

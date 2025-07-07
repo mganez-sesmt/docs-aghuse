@@ -258,3 +258,14 @@ O techo de código a seguir está associado com o cache do servidor. Note que o 
         </local-cache>
     </cache-container>
 ```
+
+
+Caso exclusivamente o dao esteja dando problema de compilação e nos firereports do teste eles falhe.
+Vá no pom.xml do /aghu/ e edite trocando de
+``` xml
+<skipDaoTest>true</skipDaoTest>
+```
+para
+``` xml
+<skipDaoTest>false</skipDaoTest>
+```

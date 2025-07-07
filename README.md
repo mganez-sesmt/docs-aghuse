@@ -213,4 +213,48 @@ Localizado em `$JAVA_BOSS/bin`
 ./standalone.sh -c standalone-full.xml
 ```
 
+## Limpeza de arquivos.
+esvazie os seguintes caminhos.
+``` sh
+JBOSS_HOME/standalone/deployments
+JBOSS_HOME/standalone/tmp
+JBOSS_HOME/standalone/data/content
+```
+
+E altere caso tenha o hash no arquivo standalone-full.xml
+
+## Cache?
 Caso tenha algum problema associado ao standalone-full.xml, observe as informações dele presente no arquivo na pasta `$JBOSS_HOME/standalone/configuration`
+
+Está tendo problemas recentes com o deploy tanto associado com memória quanto associado com cache.
+O techo de código a seguir está associado com o cache do servidor. Note que o cache-container já existe, mas deve ser colocado o tipo primefaces_cache.
+
+``` xml
+    <cache-container name="aghu_container" default-cache="permission_cache" marshaller="JBOSS">
+        <local-cache name="permission_cache">
+            <transaction mode="NONE"/>
+            <heap-memory size="500" size-unit="ENTRIES"/>
+            <expiration interval="120000" lifespan="2400000" max-idle="1200000"/>
+        </local-cache>
+        <local-cache name="parametros_cache">
+            <transaction mode="NONE"/>
+            <heap-memory size="500" size-unit="ENTRIES"/>
+            <expiration interval="120000" lifespan="1200000" max-idle="600000"/>
+        </local-cache>
+        <local-cache name="servidor_cache">
+            <transaction mode="NONE"/>
+            <heap-memory size="100" size-unit="ENTRIES"/>
+            <expiration interval="60000" lifespan="1200000" max-idle="600000"/>
+        </local-cache>
+        <local-cache name="dns_cache">
+            <transaction mode="NONE"/>
+            <heap-memory size="20" size-unit="ENTRIES"/>
+            <expiration interval="60000" lifespan="600000" max-idle="300000"/>
+        </local-cache>
+        <local-cache name="primefaces_cache">
+            <transaction mode="NONE"/>
+            <heap-memory size="20" size-unit="ENTRIES"/>
+            <expiration interval="60000" lifespan="600000" max-idle="300000"/>
+        </local-cache>
+    </cache-container>
+```

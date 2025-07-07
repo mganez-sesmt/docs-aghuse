@@ -1,10 +1,11 @@
-```
+``` sh
 /bin/sh /home/wildfly/bin/standalone.sh 
 -b=0.0.0.0 
 --server-config=standalone-full.xml
 
 
-\_ java -D[Standalone] 
+#\_ 
+java -D[Standalone] 
 -server 
 -Xms5G 
 -Xmx5G 
@@ -49,8 +50,7 @@
 
 
 
-$JAVA_HOME
-/usr/lib/jvm/java-17-openjdk-amd64
+`$JAVA_HOME : /usr/lib/jvm/java-17-openjdk-amd64`
 
 /etc/systemd/system/wildfly.service
 ``` sh
@@ -71,9 +71,7 @@ WantedBy=multi-user.target
 ```
 
 
-
-
-para fazer compilação eles estavam usando um arquivo .xml na /.m2
+### Para fazer compilação eles estavam usando um arquivo .xml na /.m2
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"

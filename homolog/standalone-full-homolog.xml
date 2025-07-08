@@ -1,0 +1,1193 @@
+<?xml version="1.0" ?>
+
+<server xmlns="urn:jboss:domain:19.0">
+    <extensions>
+        <extension module="org.jboss.as.clustering.infinispan"/>
+        <extension module="org.jboss.as.connector"/>
+        <extension module="org.jboss.as.deployment-scanner"/>
+        <extension module="org.jboss.as.ee"/>
+        <extension module="org.jboss.as.ejb3"/>
+        <extension module="org.jboss.as.jaxrs"/>
+        <extension module="org.jboss.as.jdr"/>
+        <extension module="org.jboss.as.jmx"/>
+        <extension module="org.jboss.as.jpa"/>
+        <extension module="org.jboss.as.jsf"/>
+        <extension module="org.jboss.as.jsr77"/>
+        <extension module="org.jboss.as.logging"/>
+        <extension module="org.jboss.as.mail"/>
+        <extension module="org.jboss.as.naming"/>
+        <extension module="org.jboss.as.pojo"/>
+        <extension module="org.jboss.as.remoting"/>
+        <extension module="org.jboss.as.sar"/>
+        <extension module="org.jboss.as.transactions"/>
+        <extension module="org.jboss.as.webservices"/>
+        <extension module="org.jboss.as.weld"/>
+        <extension module="org.wildfly.extension.batch.jberet"/>
+        <extension module="org.wildfly.extension.bean-validation"/>
+        <extension module="org.wildfly.extension.clustering.web"/>
+        <extension module="org.wildfly.extension.core-management"/>
+        <extension module="org.wildfly.extension.discovery"/>
+        <extension module="org.wildfly.extension.ee-security"/>
+        <extension module="org.wildfly.extension.elytron"/>
+        <extension module="org.wildfly.extension.elytron-oidc-client"/>
+        <extension module="org.wildfly.extension.health"/>
+        <extension module="org.wildfly.extension.io"/>
+        <extension module="org.wildfly.extension.messaging-activemq"/>
+        <extension module="org.wildfly.extension.metrics"/>
+        <extension module="org.wildfly.extension.request-controller"/>
+        <extension module="org.wildfly.extension.security.manager"/>
+        <extension module="org.wildfly.extension.undertow"/>
+        <extension module="org.wildfly.iiop-openjdk"/>
+    </extensions>
+    <management>
+        <audit-log>
+            <formatters>
+                <json-formatter name="json-formatter"/>
+            </formatters>
+            <handlers>
+                <file-handler name="file" formatter="json-formatter" path="audit-log.log" relative-to="jboss.server.data.dir"/>
+            </handlers>
+            <logger log-boot="true" log-read-only="false" enabled="false">
+                <handlers>
+                    <handler name="file"/>
+                </handlers>
+            </logger>
+        </audit-log>
+        <management-interfaces>
+            <http-interface http-authentication-factory="management-http-authentication">
+                <http-upgrade enabled="true" sasl-authentication-factory="management-sasl-authentication"/>
+                <socket-binding http="management-http"/>
+            </http-interface>
+        </management-interfaces>
+        <access-control provider="simple">
+            <role-mapping>
+                <role name="SuperUser">
+                    <include>
+                        <user name="$local"/>
+                    </include>
+                </role>
+            </role-mapping>
+        </access-control>
+    </management>
+    <profile>
+        <subsystem xmlns="urn:jboss:domain:logging:8.0">
+            <async-handler name="ASYNC-JDBC">
+                <level name="INFO"/>
+                <queue-length value="200"/>
+                <overflow-action value="block"/>
+                <subhandlers>
+                    <handler name="JDBC"/>
+                </subhandlers>
+            </async-handler>
+            <async-handler name="ASYNC">
+                <level name="INFO"/>
+                <queue-length value="1024"/>
+                <overflow-action value="block"/>
+                <subhandlers>
+                    <handler name="FILE"/>
+                </subhandlers>
+            </async-handler>
+            <async-handler name="ASYNC-sql">
+                <level name="TRACE"/>
+                <queue-length value="1024"/>
+                <overflow-action value="block"/>
+                <subhandlers>
+                    <handler name="FILE-sql"/>
+                </subhandlers>
+            </async-handler>
+            <console-handler name="CONSOLE">
+                <level name="INFO"/>
+                <formatter>
+                    <named-formatter name="COLOR-PATTERN"/>
+                </formatter>
+            </console-handler>
+            <custom-handler name="GRAYLOG" class="biz.paluch.logging.gelf.wildfly.WildFlyGelfLogHandler" module="biz.paluch.logging">
+                <level name="OFF"/>
+                <properties>
+                    <property name="host" value="127.0.0.1"/>
+                    <property name="port" value="12201"/>
+                    <property name="version" value="1.0"/>
+                    <property name="facility" value="logstash-gelf"/>
+                    <property name="extractStackTrace" value="true"/>
+                    <property name="filterStackTrace" value="true"/>
+                    <property name="includeLogMessageParameters" value="true"/>
+                    <property name="includeLocation" value="true"/>
+                    <property name="mdcProfiling" value="false"/>
+                    <property name="timestampPattern" value="yyyy-MM-dd HH:mm:ss,SSS"/>
+                    <property name="maximumMessageSize" value="8192"/>
+                    <property name="includeFullMdc" value="false"/>
+                </properties>
+            </custom-handler>
+            <custom-handler name="JDBC" class="br.gov.mec.aghu.logging.JDBCDataSourceHandler" module="br.gov.mec.aghu.security" enabled="false">
+                <level name="ALL"/>
+                <properties>
+                    <property name="dataSourceName" value="java:/aghuDatasource"/>
+                    <property name="bufferSize" value="100"/>
+                </properties>
+            </custom-handler>
+            <custom-handler name="FILE-NFE" class="org.jboss.logmanager.handlers.PeriodicSizeRotatingFileHandler" module="org.jboss.logmanager">
+                <level name="DEBUG"/>
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <properties>
+                    <property name="autoFlush" value="true"/>
+                    <property name="append" value="true"/>
+                    <property name="maxBackupIndex" value="7"/>
+                    <property name="rotateSize" value="52428800"/>
+                    <property name="fileName" value="${jboss.server.log.dir}/nfe.log"/>
+                </properties>
+            </custom-handler>
+            <custom-handler name="FILE-REINF" class="org.jboss.logmanager.handlers.PeriodicSizeRotatingFileHandler" module="org.jboss.logmanager">
+                <level name="DEBUG"/>
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <properties>
+                    <property name="autoFlush" value="true"/>
+                    <property name="append" value="true"/>
+                    <property name="maxBackupIndex" value="7"/>
+                    <property name="rotateSize" value="52428800"/>
+                    <property name="fileName" value="${jboss.server.log.dir}/reinf.log"/>
+                </properties>
+            </custom-handler>
+            <custom-handler name="FILE-EXAMES-INTERNET" class="org.jboss.logmanager.handlers.PeriodicSizeRotatingFileHandler" module="org.jboss.logmanager">
+                <level name="DEBUG"/>
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <properties>
+                    <property name="autoFlush" value="true"/>
+                    <property name="append" value="true"/>
+                    <property name="maxBackupIndex" value="2"/>
+                    <property name="rotateSize" value="52428800"/>
+                    <property name="fileName" value="${jboss.server.log.dir}/exames-internet.log"/>
+                </properties>
+            </custom-handler>
+            <custom-handler name="SECURITY-HANDLER" class="org.jboss.logmanager.handlers.PeriodicSizeRotatingFileHandler" module="org.jboss.logmanager">
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <properties>
+                    <property name="autoFlush" value="true"/>
+                    <property name="append" value="true"/>
+                    <property name="maxBackupIndex" value="21"/>
+                    <property name="rotateSize" value="2097152"/>
+                    <property name="fileName" value="${jboss.server.log.dir}/security-audit.log"/>
+                </properties>
+            </custom-handler>
+            <periodic-rotating-file-handler name="LISTA-INTERNADOS" autoflush="true">
+                <level name="INFO"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="lista_internados.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler name="EXAMES-TLR" autoflush="true">
+                <level name="INFO"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="exames-tlr.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler name="LOGS-ETIQUETAS" autoflush="true">
+                <level name="INFO"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="impresssao_etiquetas.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler name="TRANSFERIR-PACIENTE" autoflush="true">
+                <level name="INFO"/>
+                <formatter>
+                    <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="transferir_paciente.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler name="FILE" autoflush="true">
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="server.log"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <size-rotating-file-handler name="FILE-sql" autoflush="true">
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <file relative-to="jboss.server.log.dir" path="queries.log"/>
+                <rotate-size value="30m"/>
+                <max-backup-index value="1"/>
+                <append value="true"/>
+                <suffix value=".yyyy-MM-dd"/>
+            </size-rotating-file-handler>
+            <logger category="io.undertow.accesslog" use-parent-handlers="false">
+                <level name="ALL"/>
+                <handlers>
+                    <handler name="ASYNC-JDBC"/>
+                </handlers>
+            </logger>
+            <logger category="org.hibernate.SQL">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="ASYNC-sql"/>
+                </handlers>
+            </logger>
+            <logger category="org.hibernate.type.descriptor.sql.BasicBinder">
+                <level name="TRACE"/>
+                <handlers>
+                    <handler name="ASYNC-sql"/>
+                </handlers>
+            </logger>
+            <logger category="com.arjuna">
+                <level name="WARN"/>
+            </logger>
+            <logger category="io.jaegertracing.Configuration">
+                <level name="WARN"/>
+            </logger>
+            <logger category="org.hibernate.orm.deprecation">
+                <level name="ERROR"/>
+            </logger>
+            <logger category="org.jboss.as.config">
+                <level name="DEBUG"/>
+            </logger>
+            <logger category="sun.rmi">
+                <level name="WARN"/>
+            </logger>
+            <logger category="jacorb">
+                <level name="WARN"/>
+            </logger>
+            <logger category="jacorb.config">
+                <level name="ERROR"/>
+            </logger>
+            <logger category="br.gov.mec">
+                <level name="INFO"/>
+            </logger>
+            <logger category="org.jboss.as">
+                <level name="INFO"/>
+            </logger>
+            <logger category="org.wildfly.security" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="SECURITY-HANDLER"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.casca.autenticacao" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="SECURITY-HANDLER"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.controller">
+                <level name="INFO"/>
+            </logger>
+            <logger category="br.gov.mec.mobile.controller">
+                <level name="INFO"/>
+            </logger>
+            <logger category="br.gov.mec.aghu.tools.DebugFilter">
+                <level name="DEBUG"/>
+            </logger>
+            <logger category="br.gov.mec.aghu.faturamento.action.EncerramentoCompetenciaInternacaoController">
+                <level name="INFO"/>
+            </logger>
+            <logger category="br.gov.mec.aghu.fit">
+                <level name="INFO"/>
+            </logger>
+            <logger category="br.gov.mec.aghu.faturamento.business.ContaHospitalarON">
+                <level name="INFO"/>
+            </logger>
+            <logger category="br.gov.mec.aghu.estoque.business.LeituraNotaFiscalEletronicaRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-NFE"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.estoque.business.NfeProcessaEmailRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-NFE"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.estoque.business.NfeConsultaSituacaoRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-NFE"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.estoque.business.NfeDocumentoFiscalEntradaRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-NFE"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.estoque.business.Nfe3DocumentoFiscalEntradaRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-NFE"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.business.jobs.auto.ConsultaOrdemBancariaNFjob" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.business.jobs.auto.PagamentoNotaFiscaljob" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.business.jobs.auto.ReinfJob" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.financeiro.contabilidade.business.PagamentoNotaFiscalReinfRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.financeiro.contabilidade.business.ReinfRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.siafi.EnvioLiquidacoesFolhaPagamentoON" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.siafi.ReinfLiquidacaoRN" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-REINF"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.solicitacao.business.ProcessarExameInternetStatusON" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-EXAMES-INTERNET"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.solicitacao.integracao.business.ExameIntegracaoInternet" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="FILE-EXAMES-INTERNET"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.solicitacao.business.ExameInternetPoolON" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-EXAMES-INTERNET"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.dao.AelExameInternetStatusDAO" use-parent-handlers="false">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="FILE-EXAMES-INTERNET"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.prescricaomedica.action.ListaPacientesInternadosController" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="LISTA-INTERNADOS"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.prescricaomedica.business.ListaPacientesInternadosON" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="LISTA-INTERNADOS"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.business.PesquisaExamesTlrRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.cadastrosapoio.business.AelVersaoLaudoRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.cadastrosapoio.business.ExportarConfiguracaoExameParaItemControleRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.cadastrosapoio.business.ManterDadosBasicosExamesCRUD" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.cadastrosapoio.business.ManterExamesMaterialAnaliseRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exames.cadastrosapoio.business.ManterUnidadesExecutorasExamesCRUD" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exameselaudos.business.AtualizarItemSolicitacaoExameTlrRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exameselaudos.business.CancelamentoExameLaudoTlrRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exameselaudos.business.ExameLaudoTlrMessageListener" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exameselaudos.business.GeracaoExameLaudoTlrRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exameselaudos.business.GeracaoLogLaudoExameTlrRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.exameselaudos.business.LiberarItemSolicitacaoExameTlrRN" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="EXAMES-TLR"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.farmacia.business.EtiquetasON">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="LOGS-ETIQUETAS"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.internacao.transferir.action.TransferirPacienteController" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="TRANSFERIR-PACIENTE"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.emergencia.action.TransferirPacienteObservacaoSOController" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="TRANSFERIR-PACIENTE"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.internacao.transferir.business.TransferirPacienteON" use-parent-handlers="false">
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="TRANSFERIR-PACIENTE"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </logger>
+            <logger category="br.gov.mec.aghu.timerservice">
+                <level name="DEBUG"/>
+            </logger>
+            <root-logger>
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="ASYNC"/>
+                    <handler name="GRAYLOG"/>
+                </handlers>
+            </root-logger>
+            <formatter name="PATTERN">
+                <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+            </formatter>
+            <formatter name="COLOR-PATTERN">
+                <pattern-formatter pattern="%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"/>
+            </formatter>
+            <formatter name="ACCESS">
+                <pattern-formatter pattern="${jboss.host.name} %d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
+            </formatter>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:batch-jberet:3.0">
+            <default-job-repository name="in-memory"/>
+            <default-thread-pool name="batch"/>
+            <job-repository name="in-memory">
+                <in-memory/>
+            </job-repository>
+            <thread-pool name="batch">
+                <max-threads count="10"/>
+                <keepalive-time time="30" unit="seconds"/>
+            </thread-pool>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:bean-validation:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:core-management:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:datasources:7.0">
+            <datasources>
+                <datasource jndi-name="java:/aghuDatasource" pool-name="aghu" enabled="true" use-java-context="true">
+                    <connection-url>jdbc:postgresql://10.15.1.229:5432/agh</connection-url>
+                    <driver>PostgresqlDriver</driver>
+                    <pool>
+                        <min-pool-size>1</min-pool-size>
+                        <max-pool-size>5</max-pool-size>
+                        <prefill>true</prefill>
+                    </pool>
+                    <security>
+                        <user-name>aghu_hml</user-name>
+                        <credential-reference store="aghuse_store" alias="database-aghu-pw"/>
+                    </security>
+                    <validation>
+                        <check-valid-connection-sql>select now()</check-valid-connection-sql>
+                        <validate-on-match>true</validate-on-match>
+                    </validation>
+                    <timeout>
+                        <blocking-timeout-millis>30000</blocking-timeout-millis>
+                        <idle-timeout-minutes>15</idle-timeout-minutes>
+                    </timeout>
+                    <statement>
+                        <prepared-statement-cache-size>256</prepared-statement-cache-size>
+                        <share-prepared-statements>true</share-prepared-statements>
+                    </statement>
+                </datasource>
+                <datasource jndi-name="java:/aghuFitDatasource" pool-name="aghufit" enabled="true" use-java-context="true">
+                    <connection-url>jdbc:postgresql://10.15.1.229:5432/agh</connection-url>
+                    <driver>PostgresqlDriver</driver>
+                    <pool>
+                        <min-pool-size>1</min-pool-size>
+                        <max-pool-size>5</max-pool-size>
+                        <prefill>true</prefill>
+                    </pool>
+                    <security>
+                        <user-name>aghu_hml</user-name>
+                        <credential-reference store="aghuse_store" alias="database-fit-pw"/>
+                    </security>
+                    <validation>
+                        <check-valid-connection-sql>select now()</check-valid-connection-sql>
+                        <validate-on-match>true</validate-on-match>
+                    </validation>
+                    <timeout>
+                        <blocking-timeout-millis>30000</blocking-timeout-millis>
+                        <idle-timeout-minutes>15</idle-timeout-minutes>
+                    </timeout>
+                    <statement>
+                        <prepared-statement-cache-size>256</prepared-statement-cache-size>
+                        <share-prepared-statements>true</share-prepared-statements>
+                    </statement>
+                </datasource>
+                <drivers>
+                    <driver name="OracleDriver" module="com.oracle.database.jdbc">
+                        <driver-class>oracle.jdbc.OracleDriver</driver-class>
+                    </driver>
+                    <driver name="PostgresqlDriver" module="org.postgresql">
+                        <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
+                    </driver>
+                </drivers>
+            </datasources>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:deployment-scanner:2.0">
+            <deployment-scanner path="deployments" relative-to="jboss.server.base.dir" scan-interval="5000" deployment-timeout="1200" runtime-failure-causes-rollback="${jboss.deployment.scanner.rollback.on.failure:false}"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:discovery:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:distributable-web:2.0" default-session-management="default" default-single-sign-on-management="default">
+            <infinispan-session-management name="default" cache-container="web" granularity="SESSION">
+                <local-affinity/>
+            </infinispan-session-management>
+            <infinispan-single-sign-on-management name="default" cache-container="web" cache="sso"/>
+            <local-routing/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:ee:6.0">
+            <spec-descriptor-property-replacement>false</spec-descriptor-property-replacement>
+            <concurrent>
+                <context-services>
+                    <context-service name="default" jndi-name="java:jboss/ee/concurrency/context/default" use-transaction-setup-provider="true"/>
+                </context-services>
+                <managed-thread-factories>
+                    <managed-thread-factory name="default" jndi-name="java:jboss/ee/concurrency/factory/default" context-service="default"/>
+                </managed-thread-factories>
+                <managed-executor-services>
+                    <managed-executor-service name="default" jndi-name="java:jboss/ee/concurrency/executor/default" context-service="default" hung-task-termination-period="0" hung-task-threshold="60000" keepalive-time="5000"/>
+                </managed-executor-services>
+                <managed-scheduled-executor-services>
+                    <managed-scheduled-executor-service name="default" jndi-name="java:jboss/ee/concurrency/scheduler/default" context-service="default" hung-task-termination-period="0" hung-task-threshold="60000" keepalive-time="3000"/>
+                </managed-scheduled-executor-services>
+            </concurrent>
+            <default-bindings context-service="java:jboss/ee/concurrency/context/default" jms-connection-factory="java:jboss/DefaultJMSConnectionFactory" managed-executor-service="java:jboss/ee/concurrency/executor/default" managed-scheduled-executor-service="java:jboss/ee/concurrency/scheduler/default" managed-thread-factory="java:jboss/ee/concurrency/factory/default"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:ee-security:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:ejb3:9.0">
+            <session-bean>
+                <stateless>
+                    <bean-instance-pool-ref pool-name="slsb-strict-max-pool"/>
+                </stateless>
+                <stateful default-access-timeout="5000" cache-ref="simple" passivation-disabled-cache-ref="simple"/>
+                <singleton default-access-timeout="5000"/>
+            </session-bean>
+            <mdb>
+                <resource-adapter-ref resource-adapter-name="${ejb.resource-adapter-name:activemq-ra.rar}"/>
+                <bean-instance-pool-ref pool-name="mdb-strict-max-pool"/>
+            </mdb>
+            <pools>
+                <bean-instance-pools>
+                    <strict-max-pool name="mdb-strict-max-pool" derive-size="from-cpu-count" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+                    <strict-max-pool name="slsb-strict-max-pool" derive-size="from-worker-pools" instance-acquisition-timeout="5" instance-acquisition-timeout-unit="MINUTES"/>
+                </bean-instance-pools>
+            </pools>
+            <caches>
+                <cache name="simple"/>
+                <cache name="distributable" passivation-store-ref="infinispan" aliases="passivating clustered"/>
+            </caches>
+            <passivation-stores>
+                <passivation-store name="infinispan" cache-container="ejb" max-size="10000"/>
+            </passivation-stores>
+            <async thread-pool-name="async"/>
+            <timer-service thread-pool-name="timer" default-data-store="default-database-store">
+                <data-stores>
+                    <database-data-store name="default-database-store" datasource-jndi-name="java:/aghuDatasource" partition="${aghu.timer.partition:${jboss.node.name}}" refresh-interval="60000"/>
+                </data-stores>
+            </timer-service>
+            <remote cluster="ejb" connectors="http-remoting-connector" thread-pool-name="default">
+                <channel-creation-options>
+                    <option name="MAX_OUTBOUND_MESSAGES" value="1234" type="remoting"/>
+                </channel-creation-options>
+            </remote>
+            <thread-pools>
+                <thread-pool name="default">
+                    <max-threads count="10"/>
+                    <keepalive-time time="100" unit="seconds"/>
+                </thread-pool>
+                <thread-pool name="async">
+                    <max-threads count="10"/>
+                    <keepalive-time time="100" unit="seconds"/>
+                </thread-pool>
+                <thread-pool name="timer">
+                    <max-threads count="100"/>
+                    <keepalive-time time="100" unit="seconds"/>
+                </thread-pool>
+            </thread-pools>
+            <iiop enable-by-default="false" use-qualified-name="false"/>
+            <default-security-domain value="AghuseApplicationDomain"/>
+            <application-security-domains>
+                <application-security-domain name="AghuseApplicationDomain" security-domain="AghuseSecurityDomain"/>
+                <application-security-domain name="PesquisaApplicationDomain" security-domain="PesquisaSecurityDomain"/>
+                <application-security-domain name="AghuseApiApplicationDomain" security-domain="AghuseApiSecurityDomain"/>
+                <application-security-domain name="other" security-domain="ApplicationDomain"/>
+            </application-security-domains>
+            <default-missing-method-permissions-deny-access value="true"/>
+            <statistics enabled="${wildfly.ejb3.statistics-enabled:${wildfly.statistics-enabled:false}}"/>
+            <log-system-exceptions value="true"/>
+        </subsystem>
+        <subsystem xmlns="urn:wildfly:elytron:15.1" final-providers="combined-providers" disallowed-providers="OracleUcrypto">
+            <providers>
+                <aggregate-providers name="combined-providers">
+                    <providers name="elytron"/>
+                    <providers name="openssl"/>
+                </aggregate-providers>
+                <provider-loader name="elytron" module="org.wildfly.security.elytron"/>
+                <provider-loader name="openssl" module="org.wildfly.openssl"/>
+            </providers>
+            <audit-logging>
+                <file-audit-log name="local-audit" path="audit.log" relative-to="jboss.server.log.dir" format="JSON"/>
+            </audit-logging>
+            <security-domains>
+                <security-domain name="ManagementDomain" default-realm="ManagementRealm" permission-mapper="default-permission-mapper">
+                    <realm name="ManagementRealm" role-decoder="groups-to-roles"/>
+                    <realm name="local" role-mapper="super-user-mapper"/>
+                </security-domain>
+                <security-domain name="ApplicationDomain" default-realm="ApplicationRealm" permission-mapper="default-permission-mapper">
+                    <realm name="ApplicationRealm" role-decoder="groups-to-roles"/>
+                    <realm name="local"/>
+                </security-domain>
+                <security-domain name="AghuseSecurityDomain" default-realm="AghuseRealm" permission-mapper="default-permission-mapper">
+                    <realm name="AghuseRealm" role-mapper="aghuse-user-mapper"/>
+                </security-domain>
+                <security-domain name="PesquisaSecurityDomain" default-realm="PesquisaRealm" permission-mapper="default-permission-mapper">
+                    <realm name="PesquisaRealm" role-mapper="aghuse-user-mapper"/>
+                </security-domain>
+                <security-domain name="AghuseApiSecurityDomain" default-realm="AghuseApiRealm" permission-mapper="default-permission-mapper">
+                    <realm name="AghuseApiRealm" role-mapper="aghuse-user-mapper"/>
+                </security-domain>
+                <security-domain name="jwt-domain" default-realm="jwt-realm" permission-mapper="default-permission-mapper">
+                    <realm name="jwt-realm" role-mapper="aghuse-user-mapper"/>
+                </security-domain>
+            </security-domains>
+            <security-realms>
+                <custom-realm name="AghuseRealm" module="br.gov.mec.aghu.security" class-name="br.gov.mec.aghu.casca.autenticacao.AghuseLdapSecurityRealm">
+                    <configuration>
+                        <property name="dsJndiName" value="java:/aghuDatasource"/>
+                        <property name="validarAutenticacaoNegocial" value="select usuario.id, usuario.login, usuario.ATIVO , (select count(*) from casca.CSC_PERFIS_USUARIOS perfilusuario inner join casca.CSC_PERFIL perfil on perfil.id = perfilusuario.id_perfil where perfilusuario.id_usuario = usuario.id and (perfilusuario.dthr_expiracao is null or perfilusuario.dthr_expiracao &gt; now()) and perfil.SITUACAO = 'A' ) perfilcount from CASCA.CSC_USUARIO usuario where login = upper(?)"/>
+                        <property name="verificarVinculoServidor" value="select serv.matricula, serv.vin_codigo, serv.dt_inicio_vinculo, serv.CCT_CODIGO, serv.HTR_CODIGO, serv.OCA_CAR_CODIGO, serv.OCA_CODIGO, vin.IND_SITUACAO, vin.IND_CCUST_LOTACAO, vin.IND_HORARIO, vin.IND_OCUPACAO, vin.NRO_DIAS_ADMISSAO from agh.RAP_SERVIDORES serv inner join agh.RAP_PESSOAS_FISICAS pes on pes.codigo = serv.PES_CODIGO inner join agh.RAP_VINCULOS vin on vin.codigo = serv.vin_codigo where usuario = upper(?) and ( serv.ind_situacao = 'A' or (serv.ind_situacao = 'P' and serv.dt_fim_vinculo &gt;= now()))"/>
+                    </configuration>
+                </custom-realm>
+                <custom-realm name="PesquisaRealm" module="br.gov.mec.aghu.security" class-name="br.gov.mec.aghu.casca.autenticacao.AghusePesquisaApenasNegocialSecurityRealm">
+                    <configuration>
+                        <property name="dsJndiName" value="java:/aghuDatasource"/>
+                        <property name="validarAutenticacaoNegocial" value="select usuario.id, usuario.login, usuario.ATIVO , (select count(*) from casca.CSC_PERFIS_USUARIOS perfilusuario inner join casca.CSC_PERFIL perfil on perfil.id = perfilusuario.id_perfil where perfilusuario.id_usuario = usuario.id and (perfilusuario.dthr_expiracao is null or perfilusuario.dthr_expiracao &gt; now()) and perfil.SITUACAO = 'A' ) perfilcount from CASCA.CSC_USUARIO usuario where login = upper(?)"/>
+                        <property name="validarAutenticacaoUsuarioExternoHCPA" value="select usuario.id, usuario.login, usuario.ATIVO, senha.HASH_SENHA, (select count(*) from casca.CSC_PERFIS_USUARIOS perfilusuario inner join casca.CSC_PERFIL perfil on perfil.id = perfilusuario.id_perfil  where perfilusuario.id_usuario = usuario.id and (perfilusuario.dthr_expiracao is null or perfilusuario.dthr_expiracao &gt; sysdate) and perfil.SITUACAO = 'A') perfilcount       from CASCA.CSC_USUARIO usuario, CASCA.CSC_SENHA senha          where senha.id_usuario = usuario.id and (upper(login) = upper(?) OR (upper(email) = upper(?)))            and senha.DATA_CRIACAO = (select max(DATA_CRIACAO) from CASCA.CSC_SENHA where id_usuario = usuario.id)"/>
+                        <property name="dominioLocal" value="@hcpa.edu.br"/>
+                    </configuration>
+                </custom-realm>
+                <custom-realm name="AghuseApiRealm" module="br.gov.mec.aghu.security" class-name="br.gov.mec.aghu.casca.autenticacao.AghuseApiSecurityRealm">
+                    <configuration>
+                        <property name="dsJndiName" value="java:/aghuDatasource"/>
+                        <property name="principalsQuery" value="select t.token from casca.csc_usuarios_api u, casca.csc_tokens_api t where u.login_hcpa = upper(?) and t.seq_usuario = u.seq and t.token = ? and t.data_expiracao &gt;= ?"/>
+                    </configuration>
+                </custom-realm>
+                <custom-realm name="jwt-realm" module="br.gov.mec.aghu.security" class-name="br.gov.mec.aghu.casca.autenticacao.CustomTokenSecurityRealm">
+                    <configuration>
+                        <property name="principalClaimName" value="preferred_username"/>
+                        <property name="xDSG7Wa_FAtSVlMbn0sRdcExIzZW47t1eS8neXH92P8" value="-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApDbgVD2WrzH4Pif+l763tyntH4HR9b2YsfWZfsfkS3GfI9NubRG+6DMgmN6XNqJgaJfNpkYDqU3nDwxvf5Pdx0lqHamCcjzUfJmMevEmV5RC7o+wppIaI2RpaPeS40FD3KixafGSaZDZNSxiJav/HJTu6PI0SmHeh6yVjrjBl3RxEEmtIGcp4ZnPfswEKuAkY6YEE8tNUwjIUdeG0yZopJYhSpWxdXVbkCye+BIBHP9f2FgSMe10x2bRd3zcQCumpbaJ8yJnMV9JxPX40dfLmHiqajqwiCHtgLWA3pD2Aa2YpV9LLPaz+kZBzsl5LJmcI5zapz5IrDxkuirEw+ASCwIDAQAB-----END PUBLIC KEY-----"/>
+                        <property name="2ivjG3j2WQWhI66CmHnN02DkUa0Se9Om79bdoDansdU" value="-----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmJh7emI2Lwl3GrA2aGgC56usu5bQuQ+0/Xx9IkWlNeTgmkFc38E3VAHTP/hxdJ/3OmX/DKgA2QVZhiMrQkpHD08U2cBiDRwi9QIHCdxkdSptkiz7F+V1nn29d5ug+9irvWEce2J6/7ppZXvqGRiXzU9hJeI6j832R0JKGufcoJMQII055sgwwrXoXN602Qjpln0SwgMWuLVku83msAmvrcAGKw/Cma9+u5RCBCHUqd5KKyXBFSStbFHRdAT09kiAUz/Usa4jDIBUe6KTVc73zTHIRC+AwDzdhpc9rlhurIuEN2oZR/aFMFNzAWJXb71piEPj2LcxKiM6EU0bLcr8nQIDAQAB-----END PUBLIC KEY-----"/>
+                        <property name="dsJndiName" value="java:/aghuDatasource"/>
+                        <property name="validarAutenticacaoNegocial" value="select usuario.id, usuario.login, usuario.ATIVO , (select count(*) from casca.CSC_PERFIS_USUARIOS perfilusuario inner join casca.CSC_PERFIL perfil on perfil.id = perfilusuario.id_perfil where perfilusuario.id_usuario = usuario.id and (perfilusuario.dthr_expiracao is null or perfilusuario.dthr_expiracao &gt; now()) and perfil.SITUACAO = 'A' ) perfilcount from CASCA.CSC_USUARIO usuario where login = upper(?)"/>
+                        <property name="verificarVinculoServidor" value="select serv.matricula, serv.vin_codigo, serv.dt_inicio_vinculo, serv.CCT_CODIGO, serv.HTR_CODIGO, serv.OCA_CAR_CODIGO, serv.OCA_CODIGO, vin.IND_SITUACAO, vin.IND_CCUST_LOTACAO, vin.IND_HORARIO, vin.IND_OCUPACAO, vin.NRO_DIAS_ADMISSAO from agh.RAP_SERVIDORES serv inner join agh.RAP_PESSOAS_FISICAS pes on pes.codigo = serv.PES_CODIGO inner join agh.RAP_VINCULOS vin on vin.codigo = serv.vin_codigo where usuario = upper(?) and ( serv.ind_situacao = 'A' or (serv.ind_situacao = 'P' and serv.dt_fim_vinculo &gt;= now()))"/>
+                    </configuration>
+                </custom-realm>
+                <identity-realm name="local" identity="$local"/>
+                <properties-realm name="ApplicationRealm">
+                    <users-properties path="application-users.properties" relative-to="jboss.server.config.dir" digest-realm-name="ApplicationRealm"/>
+                    <groups-properties path="application-roles.properties" relative-to="jboss.server.config.dir"/>
+                </properties-realm>
+                <properties-realm name="ManagementRealm">
+                    <users-properties path="mgmt-users.properties" relative-to="jboss.server.config.dir" digest-realm-name="ManagementRealm"/>
+                    <groups-properties path="mgmt-groups.properties" relative-to="jboss.server.config.dir"/>
+                </properties-realm>
+            </security-realms>
+            <mappers>
+                <simple-permission-mapper name="default-permission-mapper" mapping-mode="first">
+                    <permission-mapping>
+                        <principal name="anonymous"/>
+                        <permission-set name="default-permissions"/>
+                    </permission-mapping>
+                    <permission-mapping match-all="true">
+                        <permission-set name="login-permission"/>
+                        <permission-set name="default-permissions"/>
+                    </permission-mapping>
+                </simple-permission-mapper>
+                <constant-realm-mapper name="local" realm-name="local"/>
+                <simple-role-decoder name="groups-to-roles" attribute="groups"/>
+                <constant-role-mapper name="super-user-mapper">
+                    <role name="SuperUser"/>
+                </constant-role-mapper>
+                <constant-role-mapper name="aghuse-user-mapper">
+                    <role name="ROLE_AGHU_USER"/>
+                </constant-role-mapper>
+            </mappers>
+            <permission-sets>
+                <permission-set name="login-permission">
+                    <permission class-name="org.wildfly.security.auth.permission.LoginPermission"/>
+                </permission-set>
+                <permission-set name="default-permissions">
+                    <permission class-name="org.wildfly.extension.batch.jberet.deployment.BatchPermission" module="org.wildfly.extension.batch.jberet" target-name="*"/>
+                    <permission class-name="org.wildfly.transaction.client.RemoteTransactionPermission" module="org.wildfly.transaction.client"/>
+                    <permission class-name="org.jboss.ejb.client.RemoteEJBPermission" module="org.jboss.ejb-client"/>
+                </permission-set>
+            </permission-sets>
+            <http>
+                <http-authentication-factory name="management-http-authentication" security-domain="ManagementDomain" http-server-mechanism-factory="global">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="DIGEST">
+                            <mechanism-realm realm-name="ManagementRealm"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </http-authentication-factory>
+                <http-authentication-factory name="application-http-authentication" security-domain="ApplicationDomain" http-server-mechanism-factory="global">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="BASIC">
+                            <mechanism-realm realm-name="ApplicationRealm"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </http-authentication-factory>
+                <http-authentication-factory name="AghuseHttpAuthFactory" security-domain="AghuseSecurityDomain" http-server-mechanism-factory="global">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="FORM">
+                            <mechanism-realm realm-name="AghuseApplicationDomain"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </http-authentication-factory>
+                <http-authentication-factory name="PesquisaHttpAuthFactory" security-domain="PesquisaSecurityDomain" http-server-mechanism-factory="global">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="FORM">
+                            <mechanism-realm realm-name="PesquisaApplicationDomain"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </http-authentication-factory>
+                <http-authentication-factory name="AghuseApiHttpAuthFactory" security-domain="AghuseApiSecurityDomain" http-server-mechanism-factory="global">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="BASIC">
+                            <mechanism-realm realm-name="AghuseApiApplicationDomain"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </http-authentication-factory>
+                <http-authentication-factory name="bearer-token-mechanism" security-domain="jwt-domain" http-server-mechanism-factory="global">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="BEARER_TOKEN"/>
+                    </mechanism-configuration>
+                </http-authentication-factory>
+                <provider-http-server-mechanism-factory name="global"/>
+            </http>
+            <sasl>
+                <sasl-authentication-factory name="management-sasl-authentication" sasl-server-factory="configured" security-domain="ManagementDomain">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                        <mechanism mechanism-name="DIGEST-MD5">
+                            <mechanism-realm realm-name="ManagementRealm"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </sasl-authentication-factory>
+                <sasl-authentication-factory name="application-sasl-authentication" sasl-server-factory="configured" security-domain="ApplicationDomain">
+                    <mechanism-configuration>
+                        <mechanism mechanism-name="JBOSS-LOCAL-USER" realm-mapper="local"/>
+                        <mechanism mechanism-name="DIGEST-MD5">
+                            <mechanism-realm realm-name="ApplicationRealm"/>
+                        </mechanism>
+                    </mechanism-configuration>
+                </sasl-authentication-factory>
+                <configurable-sasl-server-factory name="configured" sasl-server-factory="elytron">
+                    <properties>
+                        <property name="wildfly.sasl.local-user.default-user" value="$local"/>
+                        <property name="wildfly.sasl.local-user.challenge-path" value="${jboss.server.temp.dir}/auth"/>
+                    </properties>
+                </configurable-sasl-server-factory>
+                <mechanism-provider-filtering-sasl-server-factory name="elytron" sasl-server-factory="global">
+                    <filters>
+                        <filter provider-name="WildFlyElytron"/>
+                    </filters>
+                </mechanism-provider-filtering-sasl-server-factory>
+                <provider-sasl-server-factory name="global"/>
+            </sasl>
+            <tls>
+                <key-stores>
+                    <key-store name="applicationKS">
+                        <credential-reference clear-text="password"/>
+                        <implementation type="JKS"/>
+                        <file path="application.keystore" relative-to="jboss.server.config.dir"/>
+                    </key-store>
+                    <key-store name="websocketKS">
+                        <credential-reference clear-text="hcpa"/>
+                        <implementation type="JKS"/>
+                        <file path="websocket.keystore" relative-to="jboss.server.config.dir"/>
+                    </key-store>
+                </key-stores>
+                <key-managers>
+                    <key-manager name="applicationKM" key-store="applicationKS" generate-self-signed-certificate-host="localhost">
+                        <credential-reference clear-text="password"/>
+                    </key-manager>
+                    <key-manager name="websocketKM" key-store="websocketKS">
+                        <credential-reference clear-text="hcpa"/>
+                    </key-manager>
+                </key-managers>
+                <server-ssl-contexts>
+                    <server-ssl-context name="applicationSSC" key-manager="applicationKM"/>
+                    <server-ssl-context name="websocketSSC" key-manager="websocketKM"/>
+                </server-ssl-contexts>
+            </tls>
+            <credential-stores>
+                <credential-store name="aghuse_store" relative-to="jboss.server.config.dir" location="store_h.jceks" create="false">
+                    <credential-reference clear-text="MASK-3l53R4KhQN5OhyoF/3TawG;12345678;123"/>
+                </credential-store>
+            </credential-stores>
+        </subsystem>
+        <subsystem xmlns="urn:wildfly:elytron-oidc-client:1.0"/>
+        <subsystem xmlns="urn:wildfly:health:1.0" security-enabled="false"/>
+        <subsystem xmlns="urn:jboss:domain:iiop-openjdk:2.1">
+            <orb socket-binding="iiop"/>
+            <initializers security="elytron" transactions="spec"/>
+            <security server-requires-ssl="false" client-requires-ssl="false"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:infinispan:13.0">
+            <cache-container name="ejb" default-cache="passivation" marshaller="PROTOSTREAM" aliases="sfsb" modules="org.wildfly.clustering.ejb.infinispan">
+                <local-cache name="passivation">
+                    <expiration interval="0"/>
+                </local-cache>
+            </cache-container>
+            <cache-container name="web" default-cache="passivation" marshaller="PROTOSTREAM" modules="org.wildfly.clustering.web.infinispan">
+                <local-cache name="passivation">
+                    <expiration interval="0"/>
+                </local-cache>
+                <local-cache name="sso">
+                    <expiration interval="0"/>
+                </local-cache>
+            </cache-container>
+            <cache-container name="server" default-cache="default" marshaller="PROTOSTREAM" modules="org.wildfly.clustering.server">
+                <local-cache name="default">
+                    <expiration interval="0"/>
+                </local-cache>
+            </cache-container>
+            <cache-container name="hibernate" marshaller="JBOSS" modules="org.infinispan.hibernate-cache">
+                <local-cache name="entity">
+                    <heap-memory size="30000" size-unit="ENTRIES"/>
+                    <expiration interval="120000" max-idle="100000"/>
+                </local-cache>
+                <local-cache name="local-query">
+                    <heap-memory size="30000" size-unit="ENTRIES"/>
+                    <expiration interval="120000" max-idle="100000"/>
+                </local-cache>
+                <local-cache name="timestamps">
+                    <expiration interval="0"/>
+                </local-cache>
+                <local-cache name="pending-puts">
+                    <expiration max-idle="60000"/>
+                </local-cache>
+            </cache-container>
+            <cache-container name="aghu_container" default-cache="permission_cache" marshaller="JBOSS">
+                <local-cache name="permission_cache">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="10000" size-unit="ENTRIES"/>
+                    <expiration interval="120000" lifespan="2400000" max-idle="1200000"/>
+                </local-cache>
+                <local-cache name="parametros_cache">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="4000" size-unit="ENTRIES"/>
+                    <expiration interval="120000" lifespan="1200000" max-idle="600000"/>
+                </local-cache>
+                <local-cache name="servidor_cache">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="5000" size-unit="ENTRIES"/>
+                    <expiration interval="60000" lifespan="1200000" max-idle="600000"/>
+                </local-cache>
+                <local-cache name="dns_cache">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="1000" size-unit="ENTRIES"/>
+                    <expiration interval="60000" lifespan="600000" max-idle="300000"/>
+                </local-cache>
+                <local-cache name="primefaces_cache">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="50" size-unit="ENTRIES"/>
+                    <expiration interval="120000" lifespan="1200000" max-idle="600000"/>
+                </local-cache>
+            </cache-container>
+            <cache-container name="app-container" marshaller="JBOSS">
+                <local-cache name="equivalente-phi">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="10000" size-unit="ENTRIES"/>
+                    <expiration interval="120000" lifespan="2400000" max-idle="1200000"/>
+                </local-cache>
+                <local-cache name="caracteristica-item">
+                    <transaction mode="NONE"/>
+                    <heap-memory size="10000" size-unit="ENTRIES"/>
+                    <expiration interval="120000" lifespan="2400000" max-idle="1200000"/>
+                </local-cache>
+            </cache-container>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:io:3.0">
+            <worker name="default"/>
+            <worker name="aghuse-web-worker"/>
+            <buffer-pool name="default"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:jaxrs:2.0"/>
+        <subsystem xmlns="urn:jboss:domain:jca:5.0">
+            <archive-validation enabled="true" fail-on-error="true" fail-on-warn="false"/>
+            <bean-validation enabled="true"/>
+            <default-workmanager>
+                <short-running-threads>
+                    <core-threads count="50"/>
+                    <queue-length count="50"/>
+                    <max-threads count="50"/>
+                    <keepalive-time time="10" unit="seconds"/>
+                </short-running-threads>
+                <long-running-threads>
+                    <core-threads count="50"/>
+                    <queue-length count="50"/>
+                    <max-threads count="50"/>
+                    <keepalive-time time="10" unit="seconds"/>
+                </long-running-threads>
+            </default-workmanager>
+            <cached-connection-manager/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:jdr:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:jmx:1.3">
+            <expose-resolved-model/>
+            <expose-expression-model/>
+            <remoting-connector/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:jpa:1.1">
+            <jpa default-extended-persistence-inheritance="DEEP"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:jsf:1.1"/>
+        <subsystem xmlns="urn:jboss:domain:jsr77:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:mail:4.0">
+            <mail-session name="default" jndi-name="java:jboss/mail/Default">
+                <smtp-server outbound-socket-binding-ref="mail-smtp"/>
+            </mail-session>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:messaging-activemq:13.1">
+            <server name="default">
+                <security elytron-domain="ApplicationDomain"/>
+                <statistics enabled="${wildfly.messaging-activemq.statistics-enabled:${wildfly.statistics-enabled:false}}"/>
+                <security-setting name="#">
+                    <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+                </security-setting>
+                <address-setting name="#" dead-letter-address="jms.queue.DLQ" expiry-address="jms.queue.ExpiryQueue" max-size-bytes="10485760" page-size-bytes="2097152" message-counter-history-day-limit="10"/>
+                <http-connector name="http-connector" socket-binding="http" endpoint="http-acceptor"/>
+                <http-connector name="http-connector-throughput" socket-binding="http" endpoint="http-acceptor-throughput">
+                    <param name="batch-delay" value="50"/>
+                </http-connector>
+                <in-vm-connector name="in-vm" server-id="0">
+                    <param name="buffer-pooling" value="false"/>
+                </in-vm-connector>
+                <http-acceptor name="http-acceptor" http-listener="default"/>
+                <http-acceptor name="http-acceptor-throughput" http-listener="default">
+                    <param name="batch-delay" value="50"/>
+                    <param name="direct-deliver" value="false"/>
+                </http-acceptor>
+                <in-vm-acceptor name="in-vm" server-id="0">
+                    <param name="buffer-pooling" value="false"/>
+                </in-vm-acceptor>
+                <jms-queue name="ExpiryQueue" entries="java:/jms/queue/ExpiryQueue"/>
+                <jms-queue name="DLQ" entries="java:/jms/queue/DLQ"/>
+                <jms-queue name="pendenciaAssinaturaNivel1Queue" entries="java:/queue/pendenciaAssinaturaNivel1Queue java:jboss/exported/jms/queue/pendenciaAssinaturaNivel1Queue"/>
+                <jms-queue name="solicitacaoProcedimentoQueue" entries="java:/jms/queue/solicitacaoProcedimentoQueue java:jboss/exported/jms/queue/solicitacaoProcedimentoQueue"/>
+                <jms-queue name="loteAnexoQueue" entries="java:/jms/queue/loteAnexoQueue java:jboss/exported/jms/queue/loteAnexoQueue"/>
+                <jms-queue name="loteGuiasQueue" entries="java:/jms/queue/loteGuiasQueue java:jboss/exported/jms/queue/loteGuiasQueue"/>
+                <jms-queue name="solicitacaoDemonstrativoRetornoQueue" entries="java:/jms/queue/solicitacaoDemonstrativoRetornoQueue java:jboss/exported/jms/queue/solicitacaoDemonstrativoRetornoQueue"/>
+                <jms-queue name="solicitacaoStatusAutorizacaoQueue" entries="java:/jms/queue/solicitacaoStatusAutorizacaoQueue java:jboss/exported/jms/queue/solicitacaoStatusAutorizacaoQueue"/>
+                <jms-queue name="solicitacaoStatusProtocoloQueue" entries="java:/jms/queue/solicitacaoStatusProtocoloQueue java:jboss/exported/jms/queue/solicitacaoStatusProtocoloQueue"/>
+                <jms-queue name="solicitacaoStatusRecursoGlosaQueue" entries="java:/jms/queue/solicitacaoStatusRecursoGlosaQueue java:jboss/exported/jms/queue/solicitacaoStatusRecursoGlosaQueue"/>
+                <jms-queue name="cancelaGuiaQueue" entries="java:/jms/queue/cancelaGuiaQueue java:jboss/exported/jms/queue/cancelaGuiaQueue"/>
+                <jms-queue name="logIntegracaoQueue" entries="java:/jms/queue/logIntegracaoQueue java:jboss/exported/jms/queue/logIntegracaoQueue"/>
+                <jms-queue name="envioEmpenhoQueue" entries="java:/jms/queue/envioEmpenhoQueue java:jboss/exported/jms/queue/envioEmpenhoQueue"/>
+                <jms-queue name="integracaoEventosConsultaQueue" entries="java:/queue/integracaoEventosConsultaQueue java:jboss/exported/jms/queue/integracaoEventosConsultaQueue"/>
+                <jms-queue name="processamentoValoresPorCompetenciaQueue" entries="java:/queue/processamentoValoresPorCompetenciaQueue java:jboss/exported/jms/queue/processamentoValoresPorCompetenciaQueue"/>
+                <jms-queue name="integracaoEventosCartaoNacionalSaudeQueue" entries="java:/queue/integracaoEventosCartaoNacionalSaudeQueue java:jboss/exported/jms/queue/integracaoEventosCartaoNacionalSaudeQueue"/>
+                <connection-factory name="InVmConnectionFactory" entries="java:/ConnectionFactory" connectors="in-vm"/>
+                <connection-factory name="RemoteConnectionFactory" entries="java:jboss/exported/jms/RemoteConnectionFactory" connectors="http-connector"/>
+                <pooled-connection-factory name="activemq-ra" entries="java:/JmsXA java:jboss/DefaultJMSConnectionFactory" connectors="in-vm" transaction="xa"/>
+            </server>
+        </subsystem>
+        <subsystem xmlns="urn:wildfly:metrics:1.0" security-enabled="true" exposed-subsystems="base*,vendor*" prefix="${wildfly.metrics.prefix:wildfly}"/>
+        <subsystem xmlns="urn:jboss:domain:naming:2.0">
+            <remote-naming/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:pojo:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:remoting:4.0">
+            <http-connector name="http-remoting-connector" connector-ref="default" sasl-authentication-factory="application-sasl-authentication"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:request-controller:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:resource-adapters:6.1"/>
+        <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
+        <subsystem xmlns="urn:jboss:domain:security-manager:1.0">
+            <deployment-permissions>
+                <maximum-set>
+                    <permission class="java.security.AllPermission"/>
+                </maximum-set>
+            </deployment-permissions>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:transactions:6.0">
+            <core-environment node-identifier="${jboss.tx.node.id:1}">
+                <process-id>
+                    <uuid/>
+                </process-id>
+            </core-environment>
+            <recovery-environment socket-binding="txn-recovery-environment" status-socket-binding="txn-status-manager"/>
+            <coordinator-environment statistics-enabled="${wildfly.transactions.statistics-enabled:${wildfly.statistics-enabled:false}}"/>
+            <object-store path="tx-object-store" relative-to="jboss.server.data.dir"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:undertow:12.0" default-server="default-server" default-virtual-host="default-host" default-servlet-container="default" statistics-enabled="${wildfly.undertow.statistics-enabled:${wildfly.statistics-enabled:false}}">
+            <buffer-cache name="default"/>
+            <server name="default-server">
+                <ajp-listener name="ajp" socket-binding="ajp" worker="aghuse-web-worker" max-post-size="367001600"/>
+                <http-listener name="default" socket-binding="http" max-post-size="367001600" redirect-socket="https" enable-http2="true"/>
+                <https-listener name="https" socket-binding="https" worker="aghuse-web-worker" max-post-size="367001600" ssl-context="applicationSSC" enable-http2="true"/>
+                <https-listener name="wss" socket-binding="wss" worker="aghuse-web-worker" ssl-context="websocketSSC" enable-http2="true"/>
+                <host name="default-host" alias="localhost">
+                    <filter-ref name="samesite-cookie"/>
+                    <http-invoker http-authentication-factory="application-http-authentication"/>
+                </host>
+            </server>
+            <servlet-container name="default">
+                <jsp-config/>
+                <session-cookie http-only="true" secure="false"/>
+                <websockets/>
+            </servlet-container>
+            <filters>
+                <expression-filter name="samesite-cookie" expression="samesite-cookie(mode=lax)"/>
+            </filters>
+            <application-security-domains>
+                <application-security-domain name="AghuseApplicationDomain" http-authentication-factory="AghuseHttpAuthFactory"/>
+                <application-security-domain name="PesquisaApplicationDomain" http-authentication-factory="PesquisaHttpAuthFactory"/>
+                <application-security-domain name="AghuseApiApplicationDomain" http-authentication-factory="AghuseApiHttpAuthFactory"/>
+                <application-security-domain name="jwt-domain" http-authentication-factory="bearer-token-mechanism" override-deployment-config="true"/>
+                <application-security-domain name="other" security-domain="ApplicationDomain"/>
+            </application-security-domains>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:webservices:2.0" statistics-enabled="${wildfly.webservices.statistics-enabled:${wildfly.statistics-enabled:false}}">
+            <wsdl-host>${jboss.bind.address:127.0.0.1}</wsdl-host>
+            <endpoint-config name="Standard-Endpoint-Config"/>
+            <endpoint-config name="Recording-Endpoint-Config">
+                <pre-handler-chain name="recording-handlers" protocol-bindings="##SOAP11_HTTP ##SOAP11_HTTP_MTOM ##SOAP12_HTTP ##SOAP12_HTTP_MTOM">
+                    <handler name="RecordingHandler" class="org.jboss.ws.common.invocation.RecordingServerHandler"/>
+                </pre-handler-chain>
+            </endpoint-config>
+            <client-config name="Standard-Client-Config"/>
+        </subsystem>
+        <subsystem xmlns="urn:jboss:domain:weld:4.0"/>
+    </profile>
+    <interfaces>
+        <interface name="management">
+            <inet-address value="${jboss.bind.address.management:127.0.0.1}"/>
+        </interface>
+        <interface name="public">
+            <inet-address value="${jboss.bind.address:127.0.0.1}"/>
+        </interface>
+        <interface name="unsecure">
+            <inet-address value="${jboss.bind.address.unsecure:127.0.0.1}"/>
+        </interface>
+    </interfaces>
+    <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
+        <socket-binding name="ajp" port="${jboss.ajp.port:8009}"/>
+        <socket-binding name="http" port="${jboss.http.port:8080}"/>
+        <socket-binding name="https" port="${jboss.https.port:8443}"/>
+        <socket-binding name="iiop" interface="unsecure" port="3528"/>
+        <socket-binding name="iiop-ssl" interface="unsecure" port="3529"/>
+        <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:9990}"/>
+        <socket-binding name="management-https" interface="management" port="${jboss.management.https.port:9993}"/>
+        <socket-binding name="txn-recovery-environment" port="4712"/>
+        <socket-binding name="txn-status-manager" port="4713"/>
+        <socket-binding name="wss" port="10443"/>
+        <outbound-socket-binding name="mail-smtp">
+            <remote-destination host="${jboss.mail.server.host:localhost}" port="${jboss.mail.server.port:25}"/>
+        </outbound-socket-binding>
+    </socket-binding-group>
+    <deployments>
+        <deployment name="aghu.ear" runtime-name="aghu.ear">
+            <content sha1="c2f7c9f5cd57e5050b3a023e6c2750ae984eec7f"/>
+        </deployment>
+    </deployments>
+</server>

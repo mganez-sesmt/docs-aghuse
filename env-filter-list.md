@@ -5,6 +5,7 @@ ${env.DATASOURCE_URL}
 ${env.DB_POOLSIZE_MIN:5}
 ${env.DB_POOLSIZE_MAX:20}
 ${env.DB_USER}
+${env.DB_PWD}
 ```
 # app-parameters.properties
 ``` sh 
@@ -164,7 +165,7 @@ keycloak-url=
 security-realm/conf.properties
 ``` sh 
 # AghuseApplicationDomain, PesquisaApplicationDomain e AghuseApiApplicationDomain
-ejb-security-domain=${env.EJB_SECURITY_DOMAIN}=AghuseApplicationDomain
+ejb-security-domain=${env.EJB_SECURITY_DOMAIN:AghuseApplicationDomain}
 
 #Valores possiveis:
 #br.gov.mec.aghu.casca.autenticacao.AghuseLdapSecurityRealm

@@ -13,17 +13,21 @@ Arquivos de confiugração para se colocar na pasta .m2
 ## Launcher de Entidades 1.
 `{basedir}/aghu-entidades/`
 
-`mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" `
+``` sh
+mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"
+```
 
 ## Launcher de AGHU 2.
 `{basedir}/aghu/`
 
-`mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"`
+``` sh
+mvn install --activate-profiles=PMD "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true" "-Dpmd.skip=true" "-Dmaven.test.skip=true"
+```
 
 ## Configurar Servidor 3.
 O configura-servidor.bat faz as configurações do wildfly, basta apontar qual pasta você quer que o configure como exemplo abaixo
 ``` shell
-configura-servidor.bat "C:\develop\aghuse\aghu\aghu-ear"
+.\configura-servidor.bat "C:\develop\aghuse\aghu\aghu-ear"
 ```
 O pré requisito é apontar no `%ENV_FILTER%` e o `%JBOSS_HOME%`.
 
@@ -36,7 +40,7 @@ cd .../aghu/aghu-ear/
 ```
 
 ``` shell
-mvn wildfly:deploy -U "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"
+mvn wildfly:deploy -X "-Dmaven.wagon.http.ssl.allowall=true" "-Dmaven.wagon.http.ssl.insecure=true"
 ```
 
 Para realizar o deploy de forma remota é necessário colocar o conteúdo na forma a seguir, no arquivo `{basedir}/aghu/aghu-ear/pom.xml`

@@ -328,3 +328,8 @@ fazer uma conexão de arquivo para o aghu-estoque > src > main > java > br > gov
 Apesar de ser baseado no Email, possui muitos métodos que podem ser utilizados para a adaptação.
 
 ips_rmp_seq
+
+
+
+Caso o VSCode-GitHub fique pedindo para escolher por qual conta fazer 
+https://github.com/git-ecosystem/git-credential-manager/blob/main/docs/multiple-users.md

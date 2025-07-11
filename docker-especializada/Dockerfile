@@ -2,7 +2,7 @@ FROM openjdk:17
 WORKDIR /wildfly
 EXPOSE 8080
 COPY ./wildfly .
-RUN chmod +x /wildfly/bin/*
+RUN chmod -R 777 /wildfly
 ENTRYPOINT ["/wildfly/bin/standalone.sh"]
 CMD ["-c", "standalone-full.xml"]
 

@@ -52,16 +52,16 @@ if not exist "%ENV_FILTER%" (
 )
 
 echo ENV_FILTER=%ENV_FILTER%
-
+echo ->Limpeza
 del "%JBOSS_HOME%\standalone\tmp\*" /Q /F /S
 del "%JBOSS_HOME%\standalone\deployments\*" /Q /F /S
 del "%JBOSS_HOME%\standalone\data\content\*" /Q /F /S
-::rd -r %JBOSS_HOME%\standalone\tmp
-::rd -r %JBOSS_HOME%\standalone\data\content
-::rd -r %JBOSS_HOME%\standalone\deployments
+echo <-Limpeza
 ::-Ddatasource.driver=org.postgresql.Driver ^
 ::-Ddatasource.driver.classname=org.postgresql.Driver ^
 ::-Ddatasource.dialect.classname=br.gov.mec.aghu.core.persistence.dialect.PostgreSQLExtendedDialect ^
+::
+::
 
 REM Execução Maven
 echo Executando Maven em: %cd%
@@ -94,6 +94,29 @@ echo [SUCESSO] Build concluído em: %cd%
 pause
 endlocal
 
+::entradas de @standalone
+::@hibernate.log.queries@
+::@datasource.url@
+::@datasource.driver@
+::@datasource.user.name@
+::@datasource.password@
+::@sql-connection-check-valid-new@
+::@datasource-fit.user.name@
+::@datasource-fit.password@
+::@ejb.security-domain@
+::@security-realm.class@
+::@security-realm.validar-autenticacao-negocial@
+::@security-realm.verificar-vinculo-servidor@
+::@security-realm-pesquisa.class@
+::@security-realm.validar-autenticacao-negocial@
+::@security-realm-validar-auth-externa-pesquisa@
+::@security-realm-dominio-local@
+::@security-realm.validar-autenticacao-api@
+::@secure.cookies@
+::@security-realm.validar-autenticacao-negocial@
+::@security-realm.verificar-vinculo-servidor@
+::
+
 ::OUTRAS CONFIGURACOES POSSIVEIS DE SEREM PASSADAS
 ::aghu.external.version -> 1.0-SNAPSHOT
 ::dbuserfit -> ugen_aghu
@@ -110,7 +133,7 @@ endlocal
 ::luceneMassIndexerLoadSize -> 25
 ::datasource.driver -> PostgresqlDriver
 ::ejb.versao -> 3.2
-::security-realm-validar-auth-externa-pesquisa -> select usuario.id, usuario.login, usuario.ATIVO, senha.HASH_SENHA, (select count(*) from casca.CSC_PERFIS_USUARIOS perfilusuario inner join casca.CSC_PERFIL perfil on perfil.id = perfilusuario.id_perfil  where perfilusuario.id_usuario = usuario.id and (perfilusuario.dthr_expiracao is null or perfilusuario.dthr_expiracao > sysdate) and perfil.SITUACAO = 'A') perfilcount       from CASCA.CSC_USUARIO usuario, CASCA.CSC_SENHA senha          where senha.id_usuario = usuario.id and (upper(login) = upper(?) OR (upper(email) = upper(?)))            and senha.DATA_CRIACAO = (select max(DATA_CRIACAO) from CASCA.CSC_SENHA where id_usuario = usuario.id)
+::security-realm-validar-auth-externa-pesquisa -> select usuario.id, usuario.login, usuario.ATIVO, senha.HASH_SENHA, (select count(*) from casca.CSC_PERFIS_USUARIOS perfilusuario inner join casca.CSC_PERFIL perfil on perfil.id = perfilusuario.id_perfil  where perfilusuario.id_usuario = usuario.id and (perfilusuario.dthr_expiracao is null or perfilusuario.dthr_expiracao > sysdate) and perfil.SITUACAO = 'A') perfilcount       from CASCA.CSC_USUARIO usuario, CASCA.CSC_SENHA senha  where senha.id_usuario = usuario.id and (upper(login) = upper(?) OR (upper(email) = upper(?)))and senha.DATA_CRIACAO = (select max(DATA_CRIACAO) from CASCA.CSC_SENHA where id_usuario = usuario.id)
 ::ldap.enabled.attribute ->
 ::mascara.quarto -> ****
 ::login.sso.attribute.consuming.service.index ->
